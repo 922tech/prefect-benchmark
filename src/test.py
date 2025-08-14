@@ -40,26 +40,51 @@ def my_flow(task_id: int, username: str, password: str) -> tuple[int, str, str]:
     return task_id, username, password
 
 
+async def run_dep(taskCount):
+    tasks = []
+    for _ in range(taskCount):
+        t = asyncio.create_task(
+            run_deployment(
+                name="my-flow/local-process-deploy-local-code",
+                flow_run_name="MY_RUN",
+                poll_interval=5,
+            )  # type: ignore
+        )
+        tasks.append(t)
+    t0 = time()
+    await asyncio.gather(*tasks)
+    t1 = time()
+    file_log.info("TaskCount={}  Submit latency= {}".format(taskCount, t1 - t0))
+
+
+async def deploy_flow():
+    await my_flow.serve(
+        "test_flow",
+    )
+
+
 async def main(taskCount=8):
     tasks = []
     for _ in range(taskCount):
-        t = asyncio.create_task(run_deployment(
-            name="my-flow/local-process-deploy-local-code",flow_run_name="dddddd",
-            poll_interval=1
-        ))
+        t = asyncio.create_task(
+            run_deployment(
+                name="my-flow/local-process-deploy-local-code",
+                flow_run_name="MY_RUN_ON_TEST_POOL",
+                poll_interval=5,
+            )  # type: ignore
+        )
         tasks.append(t)
     t0 = time()
     await asyncio.gather(*tasks)
     t1 = time()
 
-    # res = await my_flow.serve("test_flow",)
-    # tasks = [
-    #     asyncio.create_task(
-    #         test_flow(random.randint(1, 100), random_string(), random_string())
-    #     )
-    #     for _ in range(taskCount)
-    # ]
-    # await asyncio.gather(*tasks)
+    tasks = [
+        asyncio.create_task(
+            test_flow(random.randint(1, 100), random_string(), random_string())
+        )
+        for _ in range(taskCount)
+    ]
+    await asyncio.gather(*tasks)
     file_log.info("TaskCount={}  Submit latency= {}".format(taskCount, t1 - t0))
 
 
