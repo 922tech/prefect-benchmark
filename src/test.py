@@ -1,8 +1,10 @@
 import asyncio
 from logging.handlers import RotatingFileHandler
 import random
+from time import time
 from prefect import flow, get_run_logger
 import os
+from prefect.deployments import run_deployment
 
 # run_deployment(name="my-first-flow/my-first-deployment")
 os.environ["PREFECT_DISABLE_TELEMETRY"] = "1"  # disable telemetry
@@ -39,18 +41,18 @@ def my_flow(task_id: int, username: str, password: str) -> tuple[int, str, str]:
 
 
 async def main(taskCount=8):
-    from prefect.deployments import run_deployment
     tasks = []
-    for i in range(10):
+    for _ in range(taskCount):
         t = asyncio.create_task(run_deployment(
-            name="my-flow/test_flow",flow_run_name="dddddd",
-            parameters={"task_id": 132, "username": "21sdf3", "password": "134sdf5"},
-            poll_interval=1, work_queue_name='default'
+            name="my-flow/local-process-deploy-local-code",flow_run_name="dddddd",
+            poll_interval=1
         ))
         tasks.append(t)
+    t0 = time()
     await asyncio.gather(*tasks)
+    t1 = time()
+
     # res = await my_flow.serve("test_flow",)
-    # t0 = time()
     # tasks = [
     #     asyncio.create_task(
     #         test_flow(random.randint(1, 100), random_string(), random_string())
@@ -58,8 +60,7 @@ async def main(taskCount=8):
     #     for _ in range(taskCount)
     # ]
     # await asyncio.gather(*tasks)
-    # t1 = time()
-    # file_log.info("TaskCount={}  Submit latency= {}".format(taskCount, t1 - t0))
+    file_log.info("TaskCount={}  Submit latency= {}".format(taskCount, t1 - t0))
 
 
 if __name__ == "__main__":
