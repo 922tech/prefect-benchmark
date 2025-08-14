@@ -9,3 +9,6 @@ redis_connection_url = "redis://localhost:6379/0"  # your Redis connection strin
 [server.database]
 connection_url = "postgresql+asyncpg://postgres:arka@localhost:5434/prefect"
 timeout = 600
+
+[logging]
+level = "DEBUG"
