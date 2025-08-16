@@ -5,8 +5,9 @@ In this way no work pool was used. Everything was executed in the application
 ![alt text](image.png)
 
 ## Using Workpool
-Redis configed as broker and cache
-PostgreSQL 13 configured as database 
+- Redis configed as broker and cache
+- PostgreSQL 13 configured as database 
+
 This configuration for work pool and server worked for all the jos
 ```sh
 # poll interval: 5
@@ -39,7 +40,7 @@ RAM: 10
 ![alt text](image-1.png)
 
 #### Disk usage
-During running the test CPU was under pressure
-Disk I/O: 1.2 kIO/s
-Range of r/w: 20-50 MB/s
+- During running the test CPU was under pressure
+- Disk I/O: 1.2 kIO/s
+- Range of r/w: 20-50 MB/s
 ![alt text](image-2.png)
